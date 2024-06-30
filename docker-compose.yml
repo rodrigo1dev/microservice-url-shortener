@@ -1,0 +1,73 @@
+services:
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/users/Dockerfile
+      target: development
+    command: sh -c "npm rebuild bcrypt --build-from-source && npm run start:dev users"
+    env_file:
+      - ./apps/users/.env
+    depends_on:
+      - postgres
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/ms_user?schema=public
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    depends_on:
+      - postgres
+      - rabbitmq
+      - users
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  gateway:
+    build:
+      context: .
+      dockerfile: ./apps/gateway/Dockerfile
+      target: development
+    command: npm run start:dev gateway
+    env_file:
+      - ./apps/gateway/.env
+    depends_on:
+      - postgres
+      - rabbitmq
+      - users
+      - auth
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+  rabbitmq:
+    image: rabbitmq:3.13.3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+  postgres:
+    image: postgres:15.4
+    container_name: skadis_postgres
+    volumes:
+      - db:/db/postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ms_user
+    ports:
+      - 5432:5432
+volumes:
+  db:
+
+
+networks:
+  ms_user:
+    driver: bridge
