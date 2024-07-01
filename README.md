@@ -75,10 +75,6 @@ Este repositório contém um encurtador de URLs com sistema de autenticação es
 
 ## Configurações do Projeto
 
-### Prisma
-
-Prisma é usado para acesso ao banco de dados. O esquema Prisma é definido em libs/common/src/database/prisma/schema.prisma. Você pode gerar o cliente Prisma executando:
-
 ```bash
 npx prisma generate
 ```
