@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   users:
     build:
@@ -14,7 +16,29 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     environment:
-      DATABASE_URL: postgres://user:password@postgres:5432/ms_user?schema=public
+      DATABASE_URL: postgres://user:password@postgres:5432/postgres?schema=public
+    networks:
+      - ms_network
+
+  shortener:
+    build:
+      context: .
+      dockerfile: ./apps/shortener/Dockerfile
+      target: development
+    command: npm run start:dev shortener
+    env_file:
+      - ./apps/shortener/.env
+    depends_on:
+      - postgres
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      DATABASE_URL: postgres://user:password@postgres:5432/postgres?schema=public
+    networks:
+      - ms_network
+
   auth:
     build:
       context: .
@@ -30,6 +54,9 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    networks:
+      - ms_network
+
   gateway:
     build:
       context: .
@@ -43,31 +70,42 @@ services:
       - rabbitmq
       - users
       - auth
+      - shortener
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - '3000:3000'
+    networks:
+      - ms_network
+
   rabbitmq:
     image: rabbitmq:3.13.3-management
     ports:
       - '5672:5672'
       - '15672:15672'
+    networks:
+      - ms_network
+
   postgres:
     image: postgres:15.4
-    container_name: skadis_postgres
+    container_name: postgres
     volumes:
-      - db:/db/postgres
+      - db_users:/db/postgres
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ms_user
+      POSTGRES_DB: postgres
     ports:
       - 5432:5432
+    networks:
+      - ms_network
+
 volumes:
-  db:
+  db_users:
+  db_shortener:
 
 
 networks:
-  ms_user:
+  ms_network:
     driver: bridge

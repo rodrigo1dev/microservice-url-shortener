@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
+    },
+    "shortener": {
+      "type": "application",
+      "root": "apps/shortener",
+      "entryFile": "main",
+      "sourceRoot": "apps/shortener/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/shortener/tsconfig.app.json"
+      }
     }
   }
 }
