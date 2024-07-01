@@ -71,10 +71,6 @@ Este repositório contém um encurtador de URLs com sistema de autenticação es
 
 ## Configurações do Projeto
 
-```bash
-npx prisma generate
-```
-
 ### RabbitMQ
 
 RabbitMQ é usado para comunicação entre serviços. A configuração do RMQ é definida em `libs/common/src/rmq/rmq.module.ts.`.
