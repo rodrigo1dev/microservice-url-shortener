@@ -6,7 +6,7 @@
   "private": false,
   "license": "MIT",
   "prisma": {
-    "schema": "apps/users/prisma/schema.prisma"
+    "schema": "prisma/schema.prisma"
   },
   "scripts": {
     "build": "nest build",
