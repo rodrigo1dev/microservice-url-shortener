@@ -45,10 +45,6 @@ Este repositório contém um encurtador de URLs com sistema de autenticação es
 
    Assim que os serviços estiverem ativos, aplique as migrações do Prisma:
 
-   ```bash
-   npx prisma migrate deploy
-   ```
-
 ### Endpoints
 
     O serviço de gateway estará acessível em `http://localhost:3000`.
