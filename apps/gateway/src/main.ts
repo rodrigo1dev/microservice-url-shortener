@@ -12,8 +12,6 @@ async function bootstrap() {
   app.disable('x-powered-by');
 
   app.use((req: Request, res: Response, next: NextFunction) => {
-    res.setHeader('X-Author-Name', 'Pouya Hasan Amreji');
-    res.setHeader('X-Author-Email', 'pouyahasanamreji@protonmail.com');
     next();
   });
 
