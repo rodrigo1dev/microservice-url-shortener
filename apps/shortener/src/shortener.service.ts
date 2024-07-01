@@ -3,6 +3,7 @@ import { DatabaseService, RmqService } from '@app/common';
 import { RmqContext } from '@nestjs/microservices';
 import { CreateUrlShortenerDto } from './dto/create-shortener.dto';
 import { generateRandomString } from '@app/common/utils/generate-ramdom-string.util';
+import { NotFoundException } from '@app/common/exceptions/not-found.exception';
 
 @Injectable()
 export class ShortenerService {
@@ -13,7 +14,7 @@ export class ShortenerService {
 
   async create(data: CreateUrlShortenerDto, context: RmqContext) {
     const random = generateRandomString(6);
-    const shortUrl = `http://localhost:3000/shortener/count-click/${random}`;
+    const shortUrl = `${process.env.BASE_URL}/shortener/count-click/${random}`;
     const url = await this.prisma.shortener.create({
       data: {
         originalUrl: data.originalUrl,
@@ -51,6 +52,15 @@ export class ShortenerService {
   }
 
   async delete(id: string, context: RmqContext) {
+    const findShortener = await this.prisma.shortener.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!findShortener) {
+      throw new NotFoundException('Shortener not found');
+    }
+
     const url = await this.prisma.shortener.update({
       where: {
         id,
@@ -68,6 +78,15 @@ export class ShortenerService {
     newOriginalUrl: string,
     context: RmqContext,
   ) {
+    const findShortener = await this.prisma.shortener.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!findShortener) {
+      throw new NotFoundException('Shortener not found');
+    }
+
     const url = await this.prisma.shortener.update({
       where: {
         id,

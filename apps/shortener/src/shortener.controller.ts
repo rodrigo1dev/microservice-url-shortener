@@ -30,7 +30,6 @@ export class ShortenerController {
 
   @MessagePattern({ cmd: 'get-all-url-shortener' })
   async findAll(@Payload() userId: string, @Ctx() context: RmqContext) {
-    console.log(userId);
     return this.shortenerService.findAll(context, userId);
   }
 

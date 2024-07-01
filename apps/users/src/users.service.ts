@@ -47,7 +47,16 @@ export class UsersService {
   }
 
   async findAll(context: RmqContext) {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        Shortener: { select: { shortUrl: true } },
+      },
+    });
+
     this.rmqService.ack(context);
     return users;
   }
