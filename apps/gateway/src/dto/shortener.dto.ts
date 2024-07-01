@@ -6,3 +6,10 @@ export class ShortenerDto {
   @IsUrl()
   originalUrl: string;
 }
+
+export class UpdateShortenerDto {
+  @IsString()
+  @IsNotEmpty()
+  @IsUrl()
+  newOriginalUrl: string;
+}

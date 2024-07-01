@@ -34,9 +34,50 @@ export class ShortenerService {
         clicks: { increment: 1 },
       },
     });
-    console.log(url.shortUrl);
     const originalUrl = url.originalUrl;
     this.rmqService.ack(context);
     return originalUrl;
+  }
+
+  async findAll(context: RmqContext, userId: string) {
+    const urls = await this.prisma.shortener.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+    });
+    this.rmqService.ack(context);
+    return urls;
+  }
+
+  async delete(id: string, context: RmqContext) {
+    const url = await this.prisma.shortener.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+    this.rmqService.ack(context);
+    return url;
+  }
+
+  async updateUrlOriginalUrl(
+    id: string,
+    newOriginalUrl: string,
+    context: RmqContext,
+  ) {
+    const url = await this.prisma.shortener.update({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        originalUrl: newOriginalUrl,
+      },
+    });
+    this.rmqService.ack(context);
+    return url;
   }
 }

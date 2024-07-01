@@ -27,4 +27,24 @@ export class ShortenerController {
   ) {
     return this.shortenerService.countClicks(shortUrl, context);
   }
+
+  @MessagePattern({ cmd: 'get-all-url-shortener' })
+  async findAll(@Payload() userId: string, @Ctx() context: RmqContext) {
+    console.log(userId);
+    return this.shortenerService.findAll(context, userId);
+  }
+
+  @MessagePattern({ cmd: 'update-url-shortener' })
+  async update(@Payload() data: any, @Ctx() context: RmqContext) {
+    return this.shortenerService.updateUrlOriginalUrl(
+      data.id,
+      data.newOriginalUrl,
+      context,
+    );
+  }
+
+  @MessagePattern({ cmd: 'delete-url-shortener' })
+  async delete(@Payload() shortUrl: string, @Ctx() context: RmqContext) {
+    return this.shortenerService.delete(shortUrl, context);
+  }
 }
